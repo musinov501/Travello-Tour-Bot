@@ -121,7 +121,7 @@ def save_travel(message: Message):
         for image in images:
             db.insert_image(image, travel_id)
 
-        bot.send_message(chat_id, "Sayohat saqlandi!!",
+        bot.send_message(chat_id, "✅Sayohat saqlandi!!",
                          reply_markup=make_buttons(admin_buttons_names, back=True))
     else:
         msg = bot.send_message(chat_id, "Sayohat rasmi linkini yuboring", reply_markup=ReplyKeyboardRemove())
@@ -212,7 +212,7 @@ def get_image_famous(message: Message):
     )
     
     del FAMOUS[from_user_id]
-    bot.send_message(chat_id, "Mashhur joy muvaffaqiyatli saqlandi!!!", reply_markup=make_buttons(admin_buttons_names, back=True))
+    bot.send_message(chat_id, "✅Mashhur joy muvaffaqiyatli saqlandi!!!", reply_markup=make_buttons(admin_buttons_names, back=True))
     
     
 

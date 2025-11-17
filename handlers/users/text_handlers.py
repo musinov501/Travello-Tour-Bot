@@ -7,15 +7,11 @@ from keyboards.dafault import make_buttons
 from keyboards.inline import lang_buttons, travel_buttons, famous_places_buttons, excursions_buttons
 from .callbacks import get_name
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-# from telebot.handler_backends import State, StatesGroup
 
 
 
-# class TravelPlanState(StatesGroup):
-#     destination = State()
-#     dates = State()
-#     transport = State()
-#     attractions = State()
+
+
 
 
 @bot.message_handler(func= lambda message:  message.text in TEXTS[db.get_lang(message.from_user.id)][101])
