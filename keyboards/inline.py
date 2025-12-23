@@ -19,7 +19,6 @@ def travel_buttons(travels_list):
     return markup
 
 
-
 def travel_pagination_buttons(travel_id: int, page: int = 1):
     markup = InlineKeyboardMarkup()
     count = db.count_images(travel_id)[0]
@@ -27,25 +26,44 @@ def travel_pagination_buttons(travel_id: int, page: int = 1):
     limit = 1
     offset = (page - 1) * limit
 
-    image = db.select_image_by_pagination(travel_id, offset, limit)[1]
-
+    # This likely returns a tuple or list, not a single value
+    image_result = db.select_image_by_pagination(travel_id, offset, limit)
+    
+    # Extract the actual image value
+    if image_result:
+        # If it returns a tuple like (image_id,) or (file_id,)
+        if isinstance(image_result, (tuple, list)):
+            image = image_result[0] if image_result[0] is not None else None
+        else:
+            image = image_result
+    else:
+        image = None
+    
+    # Debug print
+    print(f"DEBUG: Image result: {image_result}, Type: {type(image_result)}")
+    print(f"DEBUG: Extracted image: {image}, Type: {type(image)}")
+    
+    # Ensure image is a string or None
+    if image is not None and isinstance(image, (int, float)):
+        image = str(int(image))
+    
     previous = InlineKeyboardButton("⏮️ Previous", callback_data=f"prev_image_{travel_id}")
     current_page = InlineKeyboardButton(f"{page}/{count}", callback_data="current_page")
-    next = InlineKeyboardButton("⏭️ Next", callback_data=f"next_image_{travel_id}")
+    next_btn = InlineKeyboardButton("⏭️ Next", callback_data=f"next_image_{travel_id}")  # Changed from 'next' to avoid conflict
 
     info = InlineKeyboardButton("ℹ️Info", callback_data=f"info_{travel_id}")
     back = InlineKeyboardButton("🔙Back", callback_data=f"back_to_travels")
 
     if page <= 1:
-        markup.add(current_page, next)
+        markup.add(current_page, next_btn)
     elif page >= count:
         markup.add(previous, current_page)
     else:
-        markup.add(previous, current_page, next)
+        markup.add(previous, current_page, next_btn)
     markup.add(info)
     markup.add(back)
 
-    return (image, markup)
+    return (image, markup)  # Now image will be a string or None
 
 
 

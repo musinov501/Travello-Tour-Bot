@@ -66,26 +66,58 @@ def reaction_to_travel_(call: CallbackQuery):
     chat_id = call.message.chat.id
     from_user_id = call.from_user.id
     travel_id = int(call.data.split("_")[-1])
-    lang= db.get_lang(from_user_id)
+    lang = db.get_lang(from_user_id)
     bot.delete_message(chat_id, call.message.message_id)
+    
     image, markup = travel_pagination_buttons(travel_id)
-    bot.send_photo(chat_id, image, reply_markup=markup)
-
+    
+    # Handle None or invalid image
+    if image is None or image == "":
+        # Send a message instead of photo
+        text = TEXTS[lang].get("no_image", "Rasm mavjud emas")
+        bot.send_message(chat_id, text, reply_markup=markup)
+        return
+    
+    # Make sure image is a string
+    if not isinstance(image, str):
+        image = str(image)
+    
+    try:
+        bot.send_photo(chat_id, image, reply_markup=markup)
+    except Exception as e:
+        print(f"Error sending photo: {e}")
+        # Fallback to text message
+        text = TEXTS[lang].get("photo_error", "Rasmni yuklashda xatolik")
+        bot.send_message(chat_id, text, reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: "next_image_" in call.data)
 def reaction_to_next_image_(call: CallbackQuery):
     chat_id = call.message.chat.id
     travel_id = int(call.data.split("_")[-1])
     buttons = call.message.reply_markup.keyboard[0]
+    lang = db.get_lang(call.from_user.id)
     for button in buttons:
         if button.callback_data == "current_page":
             page = int(button.text.split("/")[0])
 
-
     bot.delete_message(chat_id, call.message.message_id)
     image, markup = travel_pagination_buttons(travel_id, page + 1)
-    bot.send_photo(chat_id, image, reply_markup=markup)
-
+    
+    # Handle None or invalid image
+    if image is None or image == "":
+        text = TEXTS.get(lang, {}).get("no_image", "Rasm mavjud emas")
+        bot.send_message(chat_id, text, reply_markup=markup)
+        return
+    
+    # Make sure image is a string
+    if not isinstance(image, str):
+        image = str(image)
+    
+    try:
+        bot.send_photo(chat_id, image, reply_markup=markup)
+    except Exception as e:
+        print(f"Error sending photo: {e}")
+        bot.send_message(chat_id, "Rasmni yuklashda xatolik", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: "prev_image_" in call.data)
 def reaction_to_prev_image_(call: CallbackQuery):
