@@ -31,9 +31,11 @@ def travel_pagination_buttons(travel_id: int, page: int = 1):
     
     # Extract the actual image value
     if image_result:
-        # If it returns a tuple like (image_id,) or (file_id,)
-        if isinstance(image_result, (tuple, list)):
-            image = image_result[0] if image_result[0] is not None else None
+        # If it returns a tuple like (id, image)
+        if isinstance(image_result, (tuple, list)) and len(image_result) > 1:
+            image = image_result[1] 
+        elif isinstance(image_result, (tuple, list)):
+            image = image_result[0]
         else:
             image = image_result
     else:

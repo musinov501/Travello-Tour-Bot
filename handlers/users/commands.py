@@ -37,3 +37,11 @@ def start(message: Message):
             bot.send_message(chat_id, TEXTS[lang][4], reply_markup=make_buttons(names_buttons, admin_id=from_user_id))
 
 
+
+
+@bot.message_handler(commands=["help"])
+def help(message: Message):
+    chat_id = message.chat.id
+    lang = db.get_lang(message.from_user.id)
+    text = TEXTS[lang][201]
+    bot.send_message(chat_id, text)
