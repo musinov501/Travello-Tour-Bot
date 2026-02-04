@@ -1,7 +1,9 @@
-TOKEN = '7939637254:AAGpWfWCZqyX_CTVeHJ-BF7igRuwp4u_XxA'
+from dotenv import load_dotenv
+load_dotenv()
 
+TOKEN = os.getenv("TOKEN")
+ADMINS = os.getenv("ADMINS").split(",")
 
-ADMINS = [748108970]
 
 
 TEXTS = {
